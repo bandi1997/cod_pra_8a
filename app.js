@@ -103,9 +103,9 @@ app.get("/todos/:todoId/", async (request, response) => {
     FROM 
       todo
     WHERE 
-      todo_id = ${todoId};`;
-  let todo = await database.get(getTodoQuery);
-  response.send(todo);
+      id = ${todoId};`;
+  let result = await database.get(getTodoQuery);
+  response.send(result);
 });
 
 //API3
@@ -115,17 +115,17 @@ app.post("/todos/", async (request, response) => {
   INSERT INTO
     todo (todo, priority, status)
   VALUES
-    ('${todo}', ${priority}, '${status}');`;
+    ('${todo}', '${priority}', '${status}');`;
   await database.run(postTodoQuery);
   response.send("Todo Successfully Added");
 });
 
 //API4
 app.put("/todos/:todoId/", async (request, response) => {
-  const { todoId } = request.params;
+  let { todoId } = request.params;
   let updateVal = "";
   let text = "";
-  let updateTodoQuery;
+  let updateTodoQuery = "";
   let requestBody = request.body;
 
   let previousTodoQuery = `
@@ -134,7 +134,7 @@ app.put("/todos/:todoId/", async (request, response) => {
     FROM
         todo
     WHERE
-        todo_id = ${todoId};`;
+        id = ${todoId};`;
 
   let previousTodo = await database.get(previousTodoQuery);
 
@@ -155,7 +155,7 @@ app.put("/todos/:todoId/", async (request, response) => {
             status = '${updateVal}',
             priority = '${priority1}'
         WHERE
-           todo_id = ${todoId};`;
+           id = ${todoId};`;
       await database.run(updateTodoQuery);
       response.send(`${text} Updated`);
       break;
@@ -187,7 +187,7 @@ app.put("/todos/:todoId/", async (request, response) => {
             status = '${status1}',
             priority = '${priority1}'
         WHERE
-           todo_id = ${todoId};`;
+           id = ${todoId};`;
       await database.run(updateTodoQuery);
       response.send(`${text} Updated`);
       break;
@@ -201,7 +201,7 @@ app.delete("/todos/:todoId/", async (request, response) => {
   DELETE FROM
     todo
   WHERE
-    todo_id = ${todoId};`;
+    id = ${todoId};`;
   await database.run(deleteTodoQuery);
   response.send("Todo Deleted");
 });
